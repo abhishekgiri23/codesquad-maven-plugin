@@ -28,24 +28,42 @@ public class MyMojo extends AbstractMojo {
     
     public void execute() throws MojoExecutionException {
         getLog().info("Hello " + coverage);
-        uploadCheckstyle(coverage);
+        getLog().info("Hello " + projectName);
+        getLog().info("Hello " + moduleName);
+        getLog().info("Hello " + registrationKey);
+        getLog().info("Hello " + organisation);
+        
+        uploadCoverage(coverage, projectName, moduleName, registrationKey, organisation);
         
     }
     
     @Parameter(property = "coverage", defaultValue = "plugin default value")
     private String coverage;
     
-    private void uploadCheckstyle(String filePath) {
+    @Parameter(property = "projectName", defaultValue = "plugin default value")
+    private String projectName;
+    
+    @Parameter(property = "moduleName", defaultValue = "plugin default value")
+    private String moduleName;
+    
+    @Parameter(property = "registrationKey", defaultValue = "plugin default value")
+    private String registrationKey;
+    
+    @Parameter(property = "organisation", defaultValue = "plugin default value")
+    private String organisation;
+    
+    private void uploadCoverage(String filePath, String projectName,
+                                String moduleName, String registrationKey, String organisation) {
         
         CloseableHttpClient httpclient = HttpClients.createDefault();
         
         File file = new File(filePath);
         
         HttpEntity entity = MultipartEntityBuilder.create()
-                .addTextBody("projectName", "guest-accounts")
-                .addTextBody("moduleName", "guest-accounts-forgerock")
-                .addTextBody("registrationKey", "14d6c944-4b8b-4437-a888-5fa07efeb269")
-                .addTextBody("organisation", "RCCL")
+                .addTextBody("projectName", projectName)
+                .addTextBody("moduleName", moduleName)
+                .addTextBody("registrationKey", registrationKey)
+                .addTextBody("organisation", organisation)
                 .addBinaryBody("file", file)
                 .build();
         HttpPut httpPut = new HttpPut("http://34.214.155.246:8080/add/reports");
