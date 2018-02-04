@@ -27,18 +27,18 @@ import java.io.IOException;
 public class MyMojo extends AbstractMojo {
     
     public void execute() throws MojoExecutionException {
-        getLog().info("Hello " + coverage);
+        getLog().info("Hello " + filePaths);
         getLog().info("Hello " + projectName);
         getLog().info("Hello " + moduleName);
         getLog().info("Hello " + registrationKey);
         getLog().info("Hello " + organisation);
         
-        uploadCoverage(coverage, projectName, moduleName, registrationKey, organisation);
+        uploadCoverage(filePaths, projectName, moduleName, registrationKey, organisation);
         
     }
     
-    @Parameter(property = "coverage", defaultValue = "plugin default value")
-    private String coverage;
+    @Parameter(property = "filePath", defaultValue = "plugin default value")
+    private String[] filePaths;
     
     @Parameter(property = "projectName", defaultValue = "plugin default value")
     private String projectName;
@@ -52,31 +52,33 @@ public class MyMojo extends AbstractMojo {
     @Parameter(property = "organisation", defaultValue = "plugin default value")
     private String organisation;
     
-    private void uploadCoverage(String filePath, String projectName,
+    private void uploadCoverage(String[] filePaths, String projectName,
                                 String moduleName, String registrationKey, String organisation) {
         
         CloseableHttpClient httpclient = HttpClients.createDefault();
-        
-        File file = new File(filePath);
-        
-        HttpEntity entity = MultipartEntityBuilder.create()
-                .addTextBody("projectName", projectName)
-                .addTextBody("moduleName", moduleName)
-                .addTextBody("registrationKey", registrationKey)
-                .addTextBody("organisation", organisation)
-                .addBinaryBody("file", file)
-                .build();
-        HttpPut httpPut = new HttpPut("http://34.214.155.246:8080/add/reports");
-        httpPut.setEntity(entity);
-        
-        HttpResponse response = null;
-        try {
-            response = httpclient.execute(httpPut);
-        } catch (IOException e) {
-            e.printStackTrace();
+        for (String filePath : filePaths) {
+            File file = new File(filePath);
+            
+            HttpEntity entity = MultipartEntityBuilder.create()
+                    .addTextBody("projectName", projectName)
+                    .addTextBody("moduleName", moduleName)
+                    .addTextBody("registrationKey", registrationKey)
+                    .addTextBody("organisation", organisation)
+                    .addBinaryBody("file", file)
+                    .build();
+            HttpPut httpPut = new HttpPut("http://34.214.155.246:8080/add/reports");
+            httpPut.setEntity(entity);
+            
+            HttpResponse response = null;
+            try {
+                response = httpclient.execute(httpPut);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            HttpEntity result = response.getEntity();
+            System.out.println(">>>>>>>>>>>>>>> ???" + response + filePath);
+            
         }
-        HttpEntity result = response.getEntity();
-        System.out.println(">>>>>>>>>>>>>>> ???" + response);
     }
     
 }
