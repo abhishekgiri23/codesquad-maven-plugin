@@ -24,36 +24,29 @@ import java.io.IOException;
 @Builder
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 @NoArgsConstructor(force = true)
-public class MyMojo extends AbstractMojo {
+public class CodeSquadMojo extends AbstractMojo {
     
     public void execute() throws MojoExecutionException {
-        getLog().info("Hello " + filePaths);
-        getLog().info("Hello " + projectName);
-        getLog().info("Hello " + moduleName);
-        getLog().info("Hello " + registrationKey);
-        getLog().info("Hello " + organisation);
-        
-        uploadCoverage(filePaths, projectName, moduleName, registrationKey, organisation);
-        
+        uploadReports(filePaths, projectName, moduleName, registrationKey, organisation);
     }
     
-    @Parameter(property = "filePath", defaultValue = "plugin default value")
+    @Parameter(property = "filePath", required = true)
     private String[] filePaths;
     
-    @Parameter(property = "projectName", defaultValue = "plugin default value")
+    @Parameter(property = "projectName", required = true)
     private String projectName;
     
-    @Parameter(property = "moduleName", defaultValue = "plugin default value")
+    @Parameter(property = "moduleName", required = true)
     private String moduleName;
     
-    @Parameter(property = "registrationKey", defaultValue = "plugin default value")
+    @Parameter(property = "registrationKey", required = true)
     private String registrationKey;
     
-    @Parameter(property = "organisation", defaultValue = "plugin default value")
+    @Parameter(property = "organisation", required = true)
     private String organisation;
     
-    private void uploadCoverage(String[] filePaths, String projectName,
-                                String moduleName, String registrationKey, String organisation) {
+    private void uploadReports(String[] filePaths, String projectName,
+                               String moduleName, String registrationKey, String organisation) {
         
         CloseableHttpClient httpclient = HttpClients.createDefault();
         for (String filePath : filePaths) {
@@ -72,12 +65,15 @@ public class MyMojo extends AbstractMojo {
             HttpResponse response = null;
             try {
                 response = httpclient.execute(httpPut);
+                
+                HttpEntity result = response.getEntity();
+                getLog().info("-----------------------------------");
+                getLog().info(response.getStatusLine().toString());
+                getLog().info("-----------------------------------");
+                
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            HttpEntity result = response.getEntity();
-            System.out.println(">>>>>>>>>>>>>>> ???" + response + filePath);
-            
         }
     }
     
