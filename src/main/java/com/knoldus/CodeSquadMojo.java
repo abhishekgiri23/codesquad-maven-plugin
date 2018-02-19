@@ -53,13 +53,13 @@ public class CodeSquadMojo extends AbstractMojo {
             File file = new File(filePath);
             
             HttpEntity entity = MultipartEntityBuilder.create()
-                    .addTextBody("projectName", projectName)
-                    .addTextBody("moduleName", moduleName)
-                    .addTextBody("registrationKey", registrationKey)
-                    .addTextBody("organisation", organisation)
-                    .addBinaryBody("file", file)
+                    .addTextBody(Constants.PROJECT_NAME, projectName)
+                    .addTextBody(Constants.MODULE_NAME, moduleName)
+                    .addTextBody(Constants.REGISTRATION_KEY, registrationKey)
+                    .addTextBody(Constants.ORGANISATION, organisation)
+                    .addBinaryBody(Constants.FILE, file)
                     .build();
-            HttpPut httpPut = new HttpPut("http://34.214.155.246:8080/add/reports");
+            HttpPut httpPut = new HttpPut(Constants.CODESQUAD_URL);
             httpPut.setEntity(entity);
             
             HttpResponse response = null;
