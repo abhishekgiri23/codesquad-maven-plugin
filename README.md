@@ -1,0 +1,1 @@
+# codesquad-maven-plugin
