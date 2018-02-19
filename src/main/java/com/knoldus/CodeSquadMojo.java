@@ -25,7 +25,11 @@ import java.io.IOException;
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 @NoArgsConstructor(force = true)
 public class CodeSquadMojo extends AbstractMojo {
-    
+    /**
+     * This method executes the plugin.
+     *
+     * @throws MojoExecutionException
+     */
     public void execute() throws MojoExecutionException {
         uploadReports(filePaths, projectName, moduleName, registrationKey, organisation);
     }
@@ -45,6 +49,15 @@ public class CodeSquadMojo extends AbstractMojo {
     @Parameter(property = "organisation", required = true)
     private String organisation;
     
+    /**
+     * This method upload reports to CodeSquad.
+     *
+     * @param filePaths Files to upload to CodeSquad.
+     * @param projectName Name of the Project Name to show on dashboard.
+     * @param moduleName Name of the Module Name to show on dashboard.
+     * @param registrationKey Unique Registration Key generated from CodeSquad to upload the files.
+     * @param organisation Name of the organisation to show on dashboard.
+     */
     private void uploadReports(String[] filePaths, String projectName,
                                String moduleName, String registrationKey, String organisation) {
         
