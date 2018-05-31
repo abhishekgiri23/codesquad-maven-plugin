@@ -17,7 +17,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import java.io.File;
-import java.io.IOException;
 
 @Mojo(name = "reports")
 @Value
@@ -61,23 +60,23 @@ public class CodeSquadMojo extends AbstractMojo {
      */
     private void uploadReports(String[] filePaths, String projectName,
                                String moduleName, String registrationKey, String organisation) {
-        
-        CloseableHttpClient httpclient = HttpClients.createDefault();
-        for (String filePath : filePaths) {
-            File file = new File(filePath);
-            
-            HttpEntity entity = MultipartEntityBuilder.create()
-                    .addTextBody(Constants.PROJECT_NAME, projectName)
-                    .addTextBody(Constants.MODULE_NAME, moduleName)
-                    .addTextBody(Constants.REGISTRATION_KEY, registrationKey)
-                    .addTextBody(Constants.ORGANISATION, organisation)
-                    .addBinaryBody(Constants.FILE, file)
-                    .build();
-            HttpPut httpPut = new HttpPut(Constants.CODESQUAD_URL);
-            httpPut.setEntity(entity);
-            
-            HttpResponse response = null;
-            try {
+        try {
+            CloseableHttpClient httpclient = HttpClients.createDefault();
+            for (String filePath : filePaths) {
+                File file = new File(filePath);
+                
+                HttpEntity entity = MultipartEntityBuilder.create()
+                        .addTextBody(Constants.PROJECT_NAME, projectName)
+                        .addTextBody(Constants.MODULE_NAME, moduleName)
+                        .addTextBody(Constants.REGISTRATION_KEY, registrationKey)
+                        .addTextBody(Constants.ORGANISATION, organisation)
+                        .addBinaryBody(Constants.FILE, file)
+                        .build();
+                HttpPut httpPut = new HttpPut(Constants.CODESQUAD_URL);
+                httpPut.setEntity(entity);
+                
+                HttpResponse response = null;
+                
                 response = httpclient.execute(httpPut);
                 
                 HttpEntity result = response.getEntity();
@@ -85,9 +84,10 @@ public class CodeSquadMojo extends AbstractMojo {
                 getLog().info(response.getStatusLine().toString());
                 getLog().info("-----------------------------------");
                 
-            } catch (IOException e) {
-                e.printStackTrace();
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            getLog().error(e.getMessage());
         }
     }
     
